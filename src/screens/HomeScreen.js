@@ -285,7 +285,7 @@ const HomeScreen = ({ navigation }) => {
           style={styles.sectionHeader}
           onPress={() => navigation.navigate('Workouts')}
         >
-          <Text style={styles.sectionTitle}>Suggested Workouts</Text>
+          <Text style={styles.sectionTitle}>Suggested # Workouts</Text>
           <Feather name="chevron-right" size={20} color={COLORS.textGrey} />
         </TouchableOpacity>
         
@@ -575,11 +575,11 @@ const styles = StyleSheet.create({
     paddingBottom: SIZES.padding,
   },
   workoutCard: {
-    width: width * 0.7,
+    width: width * 0.2,
     padding: SIZES.padding,
-    marginRight: SIZES.padding,
+    marginRight: SIZES.padding, 
     borderRadius: SIZES.radius,
-    backgroundColor: COLORS.card,
+    backgroundColor: COLORS.card, // backgroundColor: COLORS.card
     ...SHADOWS.light,
   },
   workoutCategoryBadge: {
@@ -625,7 +625,7 @@ const styles = StyleSheet.create({
     color: COLORS.accent,
   },
   browseMoreCard: {
-    width: width * 0.5,
+    width: width * 0.2,
     alignItems: 'center',
     justifyContent: 'center',
     padding: SIZES.padding,
