@@ -111,7 +111,8 @@ const HomeScreen = ({ navigation }) => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        {/* Calories Summary */}
+        
+        {/* Calories Summary
         <Animated.View 
           style={[
             styles.caloriesSummary,
@@ -166,7 +167,7 @@ const HomeScreen = ({ navigation }) => {
             </View>
           </LinearGradient>
         </Animated.View>
-        
+         */}
         {/* Habits Tracker */}
         <TouchableOpacity 
           style={styles.sectionHeader}
