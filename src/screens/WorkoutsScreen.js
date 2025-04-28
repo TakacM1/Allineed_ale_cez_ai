@@ -36,27 +36,10 @@ const WorkoutsScreen = ({ navigation }) => {
   
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [filteredWorkouts, setFilteredWorkouts] = useState(workouts);
+  const [filteredWorkouts, setFilteredWorkouts] = useState([]);
   
-  // Animation values
-  const fadeAnim = new Animated.Value(0);
-  const slideAnim = new Animated.Value(50);
-  
-  // Run entrance animations
-  useEffect(() => {
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 800,
-        useNativeDriver: true,
-      }),
-      Animated.timing(slideAnim, {
-        toValue: 0,
-        duration: 600,
-        useNativeDriver: true,
-      })
-    ]).start();
-  }, []);
+  // State to trigger re-rendering and re-animations
+  const [animationKey, setAnimationKey] = useState(0);
   
   // Filter workouts based on search query and category
   useEffect(() => {
@@ -78,7 +61,17 @@ const WorkoutsScreen = ({ navigation }) => {
       );
     }
     
-    setFilteredWorkouts(result);
+    // Important: We'll set filtered workouts to empty array first to ensure
+    // all cards disappear, then set the actual filtered results
+    setFilteredWorkouts([]);
+    
+    // Using setTimeout to ensure the reset happens before new cards are rendered
+    setTimeout(() => {
+      setFilteredWorkouts(result);
+      // Increment animation key to force re-render and re-animation
+      setAnimationKey(prev => prev + 1);
+    }, 50);
+    
   }, [workouts, searchQuery, selectedCategory]);
   
   // Get total number of completed workouts
@@ -104,20 +97,29 @@ const WorkoutsScreen = ({ navigation }) => {
     </TouchableOpacity>
   );
   
-  // Render workout card
+  // Render workout card with animations
   const renderWorkoutItem = ({ item, index }) => {
     const completedCount = getCompletedCount(item.id);
     
-    // Apply staggered animation
-    const itemFadeAnim = Animated.multiply(
-      fadeAnim,
-      Animated.timing(new Animated.Value(0), {
+    // Create new animation values for each card
+    const fadeAnim = new Animated.Value(0);
+    const slideAnim = new Animated.Value(50);
+    
+    // Start animations
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
         toValue: 1,
-        duration: 300,
+        duration: 500,
         delay: index * 100,
         useNativeDriver: true,
-      }).start()
-    );
+      }),
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 500,
+        delay: index * 100,
+        useNativeDriver: true,
+      })
+    ]).start();
     
     return (
       <Animated.View
@@ -125,7 +127,7 @@ const WorkoutsScreen = ({ navigation }) => {
           styles.workoutCardContainer,
           {
             opacity: fadeAnim,
-            transform: [{ translateY: Animated.multiply(slideAnim, new Animated.Value(index * 0.5 + 1)) }]
+            transform: [{ translateY: slideAnim }]
           }
         ]}
       >
@@ -248,9 +250,10 @@ const WorkoutsScreen = ({ navigation }) => {
         />
       </View>
       
-      {/* Workouts list */}
+      {/* Workouts list - with key to force re-render */}
       {filteredWorkouts.length > 0 ? (
         <FlatList
+          key={`workout-list-${animationKey}`}
           data={filteredWorkouts}
           renderItem={renderWorkoutItem}
           keyExtractor={item => item.id}
